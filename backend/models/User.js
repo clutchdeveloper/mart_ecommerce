@@ -1,6 +1,5 @@
-const Schema = require("mongoose");
-const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = mongoose.Schema(
   {
@@ -8,6 +7,7 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: [true, "is required"],
     },
+
     email: {
       type: String,
       required: [true, "is required"],
@@ -17,17 +17,20 @@ const UserSchema = mongoose.Schema(
         validator: function (str) {
           return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(str);
         },
-        message: (props) => `${props.value} is not valid email`,
+        message: (props) => `${props.value} is not a valid email`,
       },
     },
+
     password: {
       type: String,
       required: [true, "is required"],
     },
+
     isAdmin: {
       type: Boolean,
       default: false,
     },
+
     cart: {
       type: Object,
       default: {
@@ -40,6 +43,7 @@ const UserSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
+
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   },
   { minimize: false }
@@ -48,7 +52,6 @@ const UserSchema = mongoose.Schema(
 UserSchema.statics.findByCredentials = async function (email, password) {
   const user = await User.findOne({ email });
   if (!user) throw new Error("invalid credentials");
-
   const isSamePassword = bcrypt.compareSync(password, user.password);
   if (isSamePassword) return user;
   throw new Error("invalid credentials");
@@ -61,9 +64,10 @@ UserSchema.methods.toJSON = function () {
   return userObject;
 };
 
-//Hash password before saving
+//before saving => hash the password
 UserSchema.pre("save", function (next) {
   const user = this;
+
   if (!user.isModified("password")) return next();
 
   bcrypt.genSalt(10, function (err, salt) {
@@ -79,7 +83,7 @@ UserSchema.pre("save", function (next) {
 });
 
 UserSchema.pre("remove", function (next) {
-  this.model("Order").remove({ owner: this_id }, next);
+  this.model("Order").remove({ owner: this._id }, next);
 });
 
 const User = mongoose.model("User", UserSchema);
