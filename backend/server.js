@@ -8,7 +8,7 @@ require("./connectDB");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
-  cors: "http://127.0.0.1:5173",
+  cors: "http://127.0.0.1:3000",
   methods: ["GET", "POST", "PATCH", "DELETE"],
 });
 
@@ -25,6 +25,10 @@ app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
 app.use("/images", imageRoutes);
+
+app.get("/", async (req, res) => {
+  res.json("Mern app live");
+});
 
 app.post("/create-payment", async (req, res) => {
   const { amount } = req.body;
