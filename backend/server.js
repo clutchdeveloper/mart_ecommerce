@@ -13,6 +13,11 @@ const io = new Server(server, {
 });
 
 const User = require("./models/User");
+
+app.get("/", async (req, res) => {
+  res.json("Mern app live");
+});
+
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
@@ -25,10 +30,6 @@ app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
 app.use("/images", imageRoutes);
-
-app.get("/", async (req, res) => {
-  res.json("Mern app live");
-});
 
 app.post("/create-payment", async (req, res) => {
   const { amount } = req.body;
